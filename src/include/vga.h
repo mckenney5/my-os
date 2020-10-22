@@ -3,7 +3,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
- 
+
+#define TAB_SIZE 2
  
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -55,7 +56,7 @@ void terminal_initialize(void){
 	}
 }
  
-void terminal_setcolor(uint8_t color){
+void terminal_set_color(uint8_t color){
 	terminal_color = color;
 }
  
@@ -63,13 +64,43 @@ static void terminal_put_entry_at(int c, uint8_t color, size_t x, size_t y){
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
 }
+
+static void check_bounds(){
+	if (++terminal_column == VGA_WIDTH) {
+				terminal_column = 0;
+				if (++terminal_row == VGA_HEIGHT)
+					terminal_row = 0;
+			}
+}
  
 void terminal_putchar(int c){
-	if(c != 10) terminal_put_entry_at(c, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
-		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+	switch((char) c){
+		case '\n':
+			terminal_column = 0;
+			terminal_row++;
+			check_bounds();
+			break;
+		case '\t':
+			terminal_column += TAB_SIZE;
+			check_bounds();
+			break;
+		case '\v':
+			terminal_row += TAB_SIZE;
+			check_bounds();
+			break;
+		case '\b':
+			if(terminal_column != 0) terminal_column--;
+			break;
+		case '\a':
+			// TODO Bell
+			break;
+		case '\0':
+			break;
+		case '\r':
+			break;
+		default:
+			terminal_put_entry_at(c, terminal_color, terminal_column, terminal_row);
+			check_bounds();
 	}
 }
 
