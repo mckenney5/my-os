@@ -72,4 +72,13 @@ int puts(const char *s){
 	else
 		return i;
 }
+
+int printf(const char *format, ...){
+	// dummy function TODO add formatting
+	unsigned int i=0;
+	for(i=0; format[i] != '\0'; i++){
+		if(putchar((int)format[i]) == EOF) return EOF;
+	}
+	return i-1;
+}
 #endif
