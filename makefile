@@ -1,4 +1,4 @@
-myos.bin: src/kernel.c boot.o
+myos.bin: src/kernel.c boot.o src/include/stdio.h src/include/vga.h
 	# Compile and Link and Runs the Kernel
 	i686-elf-gcc -c src/kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 	i686-elf-gcc -T linker.ld -o myos.bin -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc
