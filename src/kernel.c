@@ -16,6 +16,7 @@
 #endif
  
  static void halt_and_catch_fire(){
+// ignores interupts, then constantly hangs
 	 __asm__("cli\n.hang:\nhlt\njmp .hang\n.end:");
  }
  
@@ -25,8 +26,7 @@ static void panic(char* msg){
 	printf("\nKERNEL: ");
 	printf(msg);
 	puts(" PANIC!");
-
-halt_and_catch_fire();
+	halt_and_catch_fire();
 }
 
 void sleep(unsigned int scale){
@@ -51,7 +51,6 @@ void kernel_loop(){
 		i++;
 		if(i != '\n' && i != '\v') putchar(i);
 		sleep(2);
-		break;
 	}
 	return;
 }
